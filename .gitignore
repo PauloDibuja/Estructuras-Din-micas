@@ -6,8 +6,11 @@
 *.exe
 *.o
 *.so
+# Ignore all
 *
+# Unignore all with extensions
 !*.*
+# Unignore all dirs
 !*/
 
 # Packages #
