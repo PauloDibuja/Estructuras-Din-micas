@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 typedef enum {FALSE, TRUE} BOOL;
+
 
 struct Lista{
     int valor;
@@ -27,12 +29,14 @@ void delete_in_pos(struct Lista **L, int pos, int *dato_saliente);
 
 struct Lista *crear_nodo();
 
-//------()
+//------(Other Functions)
 void imprimir_lista(struct Lista **L);
 void crear(struct Lista **L);
 int largo_lista(struct Lista **L);
 BOOL out_of_range(struct Lista **L, int pos);
 BOOL lista_vacia(struct Lista **L);
+void swap_nodes(struct Lista **L, int pos1, int pos2);
+void order_list(struct Lista **L);
 
 
 void crear(struct Lista **L){
@@ -79,6 +83,7 @@ void delete_elem_start(struct Lista **L, int *dato_saliente){
     free(p);
 }
 
+// PENDIENTE A TERMINAR
 void delete_in_pos(struct Lista **L, int pos, int *dato_saliente){
     struct Lista *p = (*L);
     if(pos >  largo_lista(&p)) return;
@@ -87,7 +92,16 @@ void delete_in_pos(struct Lista **L, int pos, int *dato_saliente){
         return;
     }else{
         struct Lista *aux, *new_sig;
-
+        int i = 0;
+        while(i < pos){
+            aux = p;
+            p = p->sig;          
+            i++;
+        }
+        new_sig = p->sig;
+        (*dato_saliente) = p->valor;
+        aux->sig = new_sig;
+        free(p);
     }
 }
 
@@ -162,7 +176,12 @@ struct Lista *extraer_nodo(struct Lista **L, int pos){
         return NULL;
     }
     if(lista_vacia(L) == FALSE){
-        
+        int i = 0;
+        while(i < pos){
+            p = p->sig;
+            i++;
+        }
+        return p;
     }else{
         printf("No se puede extraer de una lista vacia!!\n");
         return NULL;
@@ -197,3 +216,90 @@ void add_in_pos(struct Lista **L, int value, int pos){
     p->sig = nuevo;
     nuevo->sig = aux;
 }
+
+void swap_nodes(struct Lista **L, int pos1, int pos2){
+    if(pos1 == pos2){
+        return;
+    }
+    struct Lista *p1, *p2, *p1_anterior, *p2_anterior, *p1_sig, *p2_sig, *punt;
+    p1 = (*L);
+    p2 = (*L);
+    punt = (*L);
+    int i = 0, j = 0;
+    while(i < pos1){
+        p1_anterior = p1;
+        p1 = p1->sig;
+        i++;       
+    }
+    p1_sig = p1->sig;
+    while(j < pos2){
+        p2_anterior = p2;
+        p2 = p2->sig;
+        j++;
+    }
+    p2_sig = p2->sig;
+
+    // Caso nodos juntos
+
+    if(p1_sig == p2){
+        p1_anterior->sig = p2;
+        p2->sig = p1;
+        p1->sig = p2_sig;
+        return;
+    }
+
+    // Caso por defecto
+    if((*L) != p1){
+        p1_anterior->sig = p2;
+    }else{
+        (*L) = p2;
+    }
+    p2->sig =p1_sig;
+
+    p2_anterior->sig = p1;
+    if(p2->sig != NULL){
+        p1->sig = p2_sig;
+    }else{
+        p1->sig = NULL;
+    }
+}
+
+void order_list(struct Lista **L){
+    int len =largo_lista(L);
+    printf("%d\n", len);
+    for (int i = 0; i < len - 1; i++){
+        for (int j = 0; j < len - i - 1; j++){
+            printf("lolol %d, %d \n", i, j);
+            if (extraer_nodo(L, j+1)->valor < extraer_nodo(L, j)->valor){
+                printf("swap\n");
+                swap_nodes(L, j, j+1);
+            }
+        }
+    }
+}
+
+/*int particion(struct Lista **L, int bajo, int alto){
+    int pivote, i, j;
+    pivote = extraer_nodo(L, alto)->valor;
+    i = (bajo - 1);
+    for (j = bajo; j <= alto - 1; j++)
+    {
+        if (extraer_nodo(L, j)->valor <= pivote)
+        {
+            i++;
+            swap_nodes(L, i, j);
+        }
+    }
+    swap_nodes(L, i+1, alto);
+    return (i + 1);
+}
+
+void quickSort(struct Lista **L, int bajo, int alto){
+    int pi;
+    if (bajo < alto)
+    {
+        pi = particion(L, bajo, alto);
+        quickSort(L, bajo, pi - 1);
+        quickSort(L, pi + 1, alto);
+    }
+}*/
