@@ -83,7 +83,6 @@ void delete_elem_start(struct Lista **L, int *dato_saliente){
     free(p);
 }
 
-// PENDIENTE A TERMINAR
 void delete_in_pos(struct Lista **L, int pos, int *dato_saliente){
     struct Lista *p = (*L);
     if(pos >  largo_lista(&p)) return;
@@ -189,7 +188,7 @@ struct Lista *extraer_nodo(struct Lista **L, int pos){
 }
 
 BOOL out_of_range(struct Lista **L, int pos){
-    if(pos > largo_lista(L)-1  || pos < 0){
+    if(pos >= largo_lista(L)  || pos < 0){
         return TRUE;
     }
     return FALSE;
@@ -225,6 +224,8 @@ void swap_nodes(struct Lista **L, int pos1, int pos2){
     p1 = (*L);
     p2 = (*L);
     punt = (*L);
+    p1_anterior = (*L);
+    p2_anterior = (*L);
     int i = 0, j = 0;
     while(i < pos1){
         p1_anterior = p1;
@@ -241,10 +242,12 @@ void swap_nodes(struct Lista **L, int pos1, int pos2){
 
     // Caso nodos juntos
 
-    if(p1_sig == p2){
-        p1_anterior->sig = p2;
+    if(p1->sig == p2){
+        if(pos1 == 0) (*L) = p2;
+        else p1_anterior->sig = p2;
         p2->sig = p1;
-        p1->sig = p2_sig;
+        if (pos2 == largo_lista(L) - 1) p1->sig = p2_sig;
+        else p1->sig = NULL;
         return;
     }
 
@@ -266,13 +269,12 @@ void swap_nodes(struct Lista **L, int pos1, int pos2){
 
 void order_list(struct Lista **L){
     int len =largo_lista(L);
-    printf("%d\n", len);
-    for (int i = 0; i < len - 1; i++){
-        for (int j = 0; j < len - i - 1; j++){
-            printf("lolol %d, %d \n", i, j);
-            if (extraer_nodo(L, j+1)->valor < extraer_nodo(L, j)->valor){
-                printf("swap\n");
+    for (int i = 0; i < len - 1; ++i){
+        for (int j = 0; j < len - i - 1; ++j){
+            if (extraer_nodo(L, j)->valor > extraer_nodo(L, j+1)->valor){
+                printf("len: %d\n", largo_lista(L));
                 swap_nodes(L, j, j+1);
+                imprimir_lista(L);
             }
         }
     }
