@@ -4,16 +4,15 @@
 int main(){
     QUEUE *queue;
     create_queue(&queue);
+    int data_deleted = 0;
+    for (int i = 0; i < 31; i++){
+        to_queue(&queue, i);
+        if(i != 0 && i % 5 == 0){
+            unqueue(&queue, &data_deleted);
+            printf("Se fue el nodo con el numero %d.\n", data_deleted);
+        }
+    }
     print_queue(&queue);
-    to_queue(&queue, 12);
-    to_queue(&queue, 92);
-    print_queue(&queue);
-    to_queue(&queue, 662);
-    to_queue(&queue, 1423);
-    print_queue(&queue);
-    int a = 0;
-    unqueue(&queue, &a);
-    unqueue(&queue, &a);
-    print_queue(&queue);
+    
     return 0;
 }

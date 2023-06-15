@@ -37,8 +37,10 @@ void to_queue(QUEUE **Q, int value){
         return;
     }else{
         QUEUE *first = (*Q)->next;
-        (*Q)->next = n;
+        QUEUE *main_node = (*Q);
+        (*Q) = n;
         n->next = first;
+        main_node->next = n;
     }
 }
 // Desencolar

@@ -11,53 +11,55 @@ struct Lista{
     struct Lista *sig;
 };
 
-struct Lista *extraer_nodo(struct Lista **L, int pos); 
+typedef struct Lista LISTA;
+
+LISTA *extraer_nodo(LISTA **L, int pos); 
 
 //------(Adding Functions)
 
-void add_elem_end(struct Lista **L, int value);
-void add_elem_start(struct Lista **L, int value);
-void add_in_pos(struct Lista **L, int value, int pos);
+void add_elem_end(LISTA **L, int value);
+void add_elem_start(LISTA **L, int value);
+void add_in_pos(LISTA **L, int value, int pos);
 
 //------(Deleting Functions)
 
-void delete_elem_end(struct Lista **L, int *dato_saliente);
-void delete_elem_start(struct Lista **L, int *dato_saliente);
-void delete_in_pos(struct Lista **L, int pos, int *dato_saliente);
+void delete_elem_end(LISTA **L, int *dato_saliente);
+void delete_elem_start(LISTA **L, int *dato_saliente);
+void delete_in_pos(LISTA **L, int pos, int *dato_saliente);
 
 //------(Creating/Modifing Functions/Memory)
 
-struct Lista *crear_nodo();
+LISTA *crear_nodo();
 
 //------(Other Functions)
-void imprimir_lista(struct Lista **L);
-void crear(struct Lista **L);
-int largo_lista(struct Lista **L);
-BOOL out_of_range(struct Lista **L, int pos);
-BOOL lista_vacia(struct Lista **L);
-void swap_nodes(struct Lista **L, int pos1, int pos2);
-void order_list(struct Lista **L);
+void imprimir_lista(LISTA **L);
+void crear(LISTA **L);
+int largo_lista(LISTA **L);
+BOOL out_of_range(LISTA **L, int pos);
+BOOL lista_vacia(LISTA **L);
+void swap_nodes(LISTA **L, int pos1, int pos2);
+void order_list(LISTA **L);
 
 
-void crear(struct Lista **L){
+void crear(LISTA **L){
     *L =  NULL; 
 }
 
-struct Lista *crear_nodo(int value){
-    struct Lista *nuevo = (struct Lista *) malloc(sizeof(struct Lista));
+LISTA *crear_nodo(int value){
+    LISTA *nuevo = (LISTA *) malloc(sizeof(LISTA));
     nuevo->valor = value;
     nuevo->sig = NULL;
     return nuevo;
 }
 
-void delete_elem_end(struct Lista **L, int *dato_saliente){
+void delete_elem_end(LISTA **L, int *dato_saliente){
     if((*L) == NULL){
         printf("Oh, no hay elementos en la lista... :0\n");
     }else if(largo_lista(L) == 1){
         (*L) = NULL;
     }else{
-        struct Lista *p = (*L);
-        struct Lista *aux;
+        LISTA *p = (*L);
+        LISTA *aux;
         while(p->sig != NULL){
             aux = p;
             p = p->sig;
@@ -68,8 +70,8 @@ void delete_elem_end(struct Lista **L, int *dato_saliente){
     }
 }
 
-void delete_elem_start(struct Lista **L, int *dato_saliente){
-    struct Lista *p = (*L);
+void delete_elem_start(LISTA **L, int *dato_saliente){
+    LISTA *p = (*L);
     if(p == NULL){
         printf("Oh, no hay elementos en la lista... :0\n");
         return;
@@ -77,38 +79,47 @@ void delete_elem_start(struct Lista **L, int *dato_saliente){
     if(largo_lista(L) == 1){
         (*L) = NULL;
     }
-    struct Lista *aux = p->sig;
+    LISTA *aux = p->sig;
     (*L) = aux;
     (*dato_saliente) = p->valor;
     free(p);
 }
 
-void delete_in_pos(struct Lista **L, int pos, int *dato_saliente){
-    struct Lista *p = (*L);
+void delete_in_pos(LISTA **L, int pos, int *dato_saliente){
+    LISTA *p = (*L);
     if(pos >  largo_lista(&p)) return;
     if(p == NULL){
         printf("Oh, no hay elementos en la lista... :0\n");
         return;
     }else{
-        struct Lista *aux, *new_sig;
+        LISTA *aux, *new_sig;
+        LISTA *anterior, *siguiente;
+        anterior = (*L);
         int i = 0;
-        while(i < pos){
-            aux = p;
-            p = p->sig;          
+        siguiente = p->sig;
+        while (i < pos){
+            anterior = p;
+            p = p->sig;
+            if(p->sig != NULL) siguiente = p->sig;
+            else siguiente = NULL;
             i++;
         }
-        new_sig = p->sig;
-        (*dato_saliente) = p->valor;
-        aux->sig = new_sig;
+        if(p == (*L)){
+            (*L) = siguiente;
+        }else if(siguiente == NULL){
+            anterior->sig = NULL;
+        }else{
+            anterior->sig = siguiente;
+        }
         free(p);
     }
 }
 
-void add_elem_end(struct Lista **L, int value){
-    struct Lista *p;
+void add_elem_end(LISTA **L, int value){
+    LISTA *p;
     p = *L;
 
-    struct Lista *nuevo = crear_nodo(value);
+    LISTA *nuevo = crear_nodo(value);
 
     if(lista_vacia(L) == TRUE){
         *L = nuevo;
@@ -121,28 +132,28 @@ void add_elem_end(struct Lista **L, int value){
     }    
 }
 
-void add_elem_start(struct Lista **L, int value){
+void add_elem_start(LISTA **L, int value){
     
-    struct Lista *nuevo = crear_nodo(value);
+    LISTA *nuevo = crear_nodo(value);
     if(lista_vacia(L) == TRUE){
-        *L = nuevo;
+        (*L) = nuevo;
     }else{
-        struct Lista *temp1, *temp2;
+        LISTA *temp1;
         temp1 = *L;
         *L = nuevo;
         nuevo->sig = temp1;
     }
 }
 
-BOOL lista_vacia(struct Lista **L){
+BOOL lista_vacia(LISTA **L){
     if((*L) == NULL){
         return TRUE;
     }
     return FALSE;
 }
 
-int largo_lista(struct Lista **L){
-    struct Lista *p = *L;
+int largo_lista(LISTA **L){
+    LISTA *p = *L;
     if(lista_vacia(L) == FALSE){
         int i = 1;
         while (p->sig != NULL){
@@ -154,22 +165,23 @@ int largo_lista(struct Lista **L){
     return 0;
 }
 
-void imprimir_lista(struct Lista **L){
-    struct Lista *p = *L;
+void imprimir_lista(LISTA **L){
+    LISTA *p = *L;
     if(p == NULL){
         printf("Lista : | Lista vacia |\n");
         return;
     }
     printf("Lista : |");
-    while (p != NULL){
-        printf("%d|", p->valor);
+    printf("|%d|", p->valor);
+    while (p->sig != NULL){
         p = p->sig;
+        printf("|%d|", p->valor);
     }
     printf("\n");
 }
 
-struct Lista *extraer_nodo(struct Lista **L, int pos){
-    struct Lista *p = (*L);
+LISTA *extraer_nodo(LISTA **L, int pos){
+    LISTA *p = (*L);
     if(out_of_range(&p, pos) == TRUE){
         printf("Posicion fuera de rango!!\n");
         return NULL;
@@ -187,14 +199,14 @@ struct Lista *extraer_nodo(struct Lista **L, int pos){
     }
 }
 
-BOOL out_of_range(struct Lista **L, int pos){
+BOOL out_of_range(LISTA **L, int pos){
     if(pos >= largo_lista(L)  || pos < 0){
         return TRUE;
     }
     return FALSE;
 }
 
-void add_in_pos(struct Lista **L, int value, int pos){
+void add_in_pos(LISTA **L, int value, int pos){
     if(lista_vacia(L) == TRUE){
         printf("No puedes agregar nodos a posiciones cuando la lista está vacía.\n");
         return;
@@ -203,8 +215,8 @@ void add_in_pos(struct Lista **L, int value, int pos){
         printf("Posicion fuera de rango!!\n");
         return;
     }
-    struct Lista *nuevo = crear_nodo(value);
-    struct Lista *p, *aux;
+    LISTA *nuevo = crear_nodo(value);
+    LISTA *p, *aux;
     p = *L;
     int i = 0;
     while (i < pos){ 
@@ -216,11 +228,11 @@ void add_in_pos(struct Lista **L, int value, int pos){
     nuevo->sig = aux;
 }
 
-void swap_nodes(struct Lista **L, int pos1, int pos2){
+void swap_nodes(LISTA **L, int pos1, int pos2){
     if(pos1 == pos2){
         return;
     }
-    struct Lista *p1, *p2, *p1_anterior, *p2_anterior, *p1_sig, *p2_sig, *punt;
+    LISTA *p1, *p2, *p1_anterior, *p2_anterior, *p1_sig, *p2_sig, *punt;
     p1 = (*L);
     p2 = (*L);
     punt = (*L);
@@ -267,7 +279,7 @@ void swap_nodes(struct Lista **L, int pos1, int pos2){
     }
 }
 
-void order_list(struct Lista **L){
+void order_list(LISTA **L){
     int len =largo_lista(L);
     for (int i = 0; i < len - 1; ++i){
         for (int j = 0; j < len - i - 1; ++j){
@@ -279,29 +291,3 @@ void order_list(struct Lista **L){
         }
     }
 }
-
-/*int particion(struct Lista **L, int bajo, int alto){
-    int pivote, i, j;
-    pivote = extraer_nodo(L, alto)->valor;
-    i = (bajo - 1);
-    for (j = bajo; j <= alto - 1; j++)
-    {
-        if (extraer_nodo(L, j)->valor <= pivote)
-        {
-            i++;
-            swap_nodes(L, i, j);
-        }
-    }
-    swap_nodes(L, i+1, alto);
-    return (i + 1);
-}
-
-void quickSort(struct Lista **L, int bajo, int alto){
-    int pi;
-    if (bajo < alto)
-    {
-        pi = particion(L, bajo, alto);
-        quickSort(L, bajo, pi - 1);
-        quickSort(L, pi + 1, alto);
-    }
-}*/

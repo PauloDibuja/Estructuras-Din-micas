@@ -32,10 +32,10 @@ void create_stack(STACK **S){
 }
 
 STACK *create_new_node(int value){
-    STACK *new = (STACK *) malloc(sizeof(STACK));
-    new->value = value;
-    new->next = NULL;
-    return new;
+    STACK *new_node = (STACK *) malloc(sizeof(STACK));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
 }
 
 BOOLEAN is_empty_stack(STACK **S){
@@ -48,14 +48,14 @@ BOOLEAN is_empty_stack(STACK **S){
 }
 
 void push(STACK **S, int value){
-    STACK *new = create_new_node(value);
+    STACK *new_node = create_new_node(value);
     if((*S) == NULL){
-        (*S) = new;
+        (*S) = new_node;
     }else{
         STACK *p, *p_sig;
         p = (*S);
-        (*S) = new;
-        new->next = p;
+        (*S) = new_node;
+        new_node->next = p;
     }
 }
 
