@@ -61,7 +61,7 @@ void push(STACK **S, int value){
 
 void pop(STACK **S, int *value){
     if((*S) == NULL){
-        printf("LA PILA ESTA VACIA, PASTEL!!");
+        //printf("LA PILA ESTA VACIA, PASTEL!!");
         return;
     }else{
         STACK *p;
